@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,9 +20,11 @@ import java.io.InputStream;
 
 public class EditorActivity extends AppCompatActivity {
     private LienzoDibujo lienzoDibujo;
-    private Button bt_green, bt_rojo, bt_ama, bt_azul, bt_mor, bt_ne, bt_bor, bt_mas, bt_menos;
-    public static int c;
+    private Button bt_green, bt_rojo, bt_ama, bt_azul, bt_mor, bt_ne, bt_bor, bt_mas, bt_menos, bt_new;
+    public static int c = Color.BLACK;
     public static int tam = 20;
+    private static final int READ_REQUEST_CODE = 42;
+    private Uri uri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +97,13 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
 
-
+        bt_new = findViewById(R.id.bt_new);
+        bt_new.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // Para limpiar el lienzo
+            }
+        });
     }
-
 
 }

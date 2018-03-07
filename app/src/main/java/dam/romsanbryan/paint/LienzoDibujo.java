@@ -15,6 +15,7 @@ import android.view.SurfaceView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 
 /**
@@ -110,7 +111,7 @@ public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback 
         // lienzo, la superficie de dibujo
         private Canvas canvas;
         // brocha para pintar
-        private Paint drawPaint = new Paint();
+        private Paint drawPaint = new Paint();;
         // Color para pintar
         private int color;
 
@@ -121,6 +122,7 @@ public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback 
 
         @Override
         public void run() {
+
             boolean retry=true;
 
             if (holder.getSurface().isValid()) {

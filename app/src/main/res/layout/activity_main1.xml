@@ -31,6 +31,12 @@
             android:text="Open" />
 
         <Button
+            android:id="@+id/bt_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New" />
+
+        <Button
             android:id="@+id/goma"
             android:layout_width="37dp"
             android:layout_height="38dp"
@@ -75,6 +81,7 @@
                 android:id="@+id/bt_color1"
                 android:layout_width="23dp"
                 android:layout_height="28dp"
+                android:layout_margin="3dp"
                 android:layout_weight="0"
                 android:background="#00FF00" />
 
@@ -82,12 +89,14 @@
                 android:id="@+id/bt_color2"
                 android:layout_width="23dp"
                 android:layout_height="28dp"
+                android:layout_margin="3dp"
                 android:background="#ffffff00" />
 
             <Button
                 android:id="@+id/bt_color3"
                 android:layout_width="23dp"
                 android:layout_height="28dp"
+                android:layout_margin="3dp"
                 android:background="#DF0101" />
         </LinearLayout>
 
@@ -100,18 +109,21 @@
                 android:id="@+id/bt_color4"
                 android:layout_width="23dp"
                 android:layout_height="28dp"
+                android:layout_margin="3dp"
                 android:background="#0000FF" />
 
             <Button
                 android:id="@+id/bt_color5"
                 android:layout_width="23dp"
                 android:layout_height="28dp"
+                android:layout_margin="3dp"
                 android:background="#ffff00ff" />
 
             <Button
                 android:id="@+id/bt_color6"
                 android:layout_width="23dp"
                 android:layout_height="28dp"
+                android:layout_margin="3dp"
                 android:background="#000" />
         </LinearLayout>
 
