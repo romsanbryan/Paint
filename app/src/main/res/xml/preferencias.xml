@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Hace que se muestre como desplegable en otra pantalla-->
+        <EditTextPreference
+            android:key="tamaño"
+            android:title="Tamaño del pincel"
+            android:summary="Introduce aquí tamaño del pincel"
+            android:dialogTitle="Tamaño"
+            android:inputType="number"/>
+
+        <ListPreference
+            android:key="color"
+            android:title="Color"
+            android:summary="Seleccion color del pincel"
+            android:dialogTitle="Elige Color"
+            android:entries="@array/color"
+            android:entryValues="@array/codigoColor"/>
+</PreferenceScreen>

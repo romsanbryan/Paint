@@ -1,35 +1,31 @@
 package dam.romsanbryan.paint;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Environment;
+
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
 
 public class EditorActivity extends AppCompatActivity {
     private LienzoDibujo lienzoDibujo;
-    private Button bt_green, bt_rojo, bt_ama, bt_azul, bt_mor, bt_ne, bt_bor, bt_mas, bt_menos, bt_new;
-    public static int c = Color.BLACK;
-    public static int tam = 20;
-    private static final int READ_REQUEST_CODE = 42;
-    private Uri uri = null;
+    private Button bt_green, bt_rojo, bt_ama, bt_azul, bt_mor, bt_ne, bt_bor, bt_mas, bt_menos, bt_new, bt_pref;
+    public static int c;
+    public static int tam;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main1);
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        tam = preferences.getInt("tamaño", 20);
+        c = preferences.getInt("color", -65536);
 
 
         bt_rojo = findViewById(R.id.bt_color3);
@@ -104,6 +100,13 @@ public class EditorActivity extends AppCompatActivity {
                // Para limpiar el lienzo
             }
         });
-    }
+        bt_pref = findViewById(R.id.pref);
+        bt_pref.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsActivity()).commit();
+            }
+        });
 
+    }
 }
