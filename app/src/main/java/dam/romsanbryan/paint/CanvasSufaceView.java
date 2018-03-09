@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -18,13 +19,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 
-
-
 /**
  * Created by romsanbryan on 5/3/18.
  */
 @SuppressLint("AppCompatCustomView")
-public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback {
+public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callback {
 
     // Variables
         // Privadas
@@ -34,11 +33,10 @@ public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback 
     private float touched_x; // Eje x de contacto
     private float touched_y; // Eje y de contacto
     private Path drawPath; // Ruta dibujada con el dedo
-    public final File outPath = new File("/sdcard/DCIM/"); // Ruta donde guardaremos las imagenes;
-    private String nombre;
-        // Privadas estaticas
     private Bitmap bitMap; // Mapa de bits
-    private SharedPreferences preferences;
+    private SharedPreferences preferences; // Objeto de preferencias
+        // Variables staticas y final
+    public static final File outPath = new File("/sdcard/DCIM/"); // Ruta donde guardaremos las imagenes;
 
     // Constructores
 
@@ -47,7 +45,7 @@ public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback 
      *
      * @param context Contexto de la aplicacion
      */
-    public LienzoDibujo(Context context){
+    public CanvasSufaceView(Context context){
         this(context, null);
     }
 
@@ -57,14 +55,14 @@ public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback 
      * @param context Contexto de la aplicacion
      * @param attrs Atributos
      */
-    public LienzoDibujo(Context context, AttributeSet attrs) {
+    public CanvasSufaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         if (!bitMapFile.isEmpty()) { // Comprueba que el fichero de bitmap NO esta vacio
             bitMap = BitmapFactory.decodeFile(bitMapFile); // Decodifica el fichero en el bitmap
 
         }
-        preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        preferences = PreferenceManager.getDefaultSharedPreferences(getContext()); // Asignamos el objeto de preferencias
 
         getHolder().addCallback(this); //suscribir la instancia de la clase al callback del holder
         drawPath = new Path(); // Trazos del para dibujar
@@ -132,6 +130,11 @@ public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback 
                 drawPath.lineTo(touched_x, touched_y); // Hacemos una linea por los ejes
                 hiloDibujo = new HiloDibujo(getHolder()); // Hilo de dibujo
                 hiloDibujo.start(); // Llamamos al hilo para que pinte
+                try {
+                    hiloDibujo.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
             default:
                 return false;
@@ -140,13 +143,24 @@ public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback 
     }
 
 
+    /**
+     * Guardamos el bitMap
+     *
+     * @param bitMap
+     */
     public void setBitmap(Bitmap bitMap){
         if(bitMap!=null) {
             this.bitMap = bitMap;
-            //API >= 19
-            //this.bitMap.setWidth(getWidth());
-            //this.bitMap.setHeight(getHeight());
+            if (Build.VERSION.SDK_INT>=19) {
+                this.bitMap.setWidth(getWidth());
+                this.bitMap.setHeight(getHeight());
+            }
             hiloDibujo.start();
+            try {
+                hiloDibujo.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -200,8 +214,8 @@ public class LienzoDibujo extends SurfaceView implements SurfaceHolder.Callback 
                 try {
                     canvas = holder.lockCanvas(null); // Bloqueamos canvas
 
-                    canvas.drawBitmap(Bitmap.createBitmap (LienzoDibujo.this.getWidth()
-                            , LienzoDibujo.this.getHeight(), Bitmap.Config.ARGB_8888), 0,0,null); // Cargamos nuestro bitmap
+                    canvas.drawBitmap(Bitmap.createBitmap (CanvasSufaceView.this.getWidth()
+                            , CanvasSufaceView.this.getHeight(), Bitmap.Config.ARGB_8888), 0,0,null); // Cargamos nuestro bitmap
                     // Propiedades del pincel
                     drawPaint.setColor(Integer.parseInt(preferences.getString("color", "-16777216"))); // Color
                     drawPaint.setAntiAlias(true); // Configura Flags

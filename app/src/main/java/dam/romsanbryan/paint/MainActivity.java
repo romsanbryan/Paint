@@ -28,35 +28,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // Metodos
         // Privados
-    private LienzoDibujo lienzoDibujo; // Objeto de la clase LienzoDibujo
+    private CanvasSufaceView canvas; // Objeto de la clase LienzoDibujo
     private DataBaseHelper myDB;
-    private Button bt_green, bt_rojo, bt_ama, bt_azul, bt_mor, bt_ne, bt_bor; // Botones de colores
+    private Button bt_verde, bt_rojo, bt_ama, bt_azul, bt_mor, bt_ne, bt_bor; // Botones de colores
     private Button bt_mas, bt_menos; // Botones de tamaño del pincel
     private Button  bt_new, bt_pref, bt_reciente, bt_save, bt_foto; // Otros botones
-        // Publicos estaticos
-    public static int c; // Variable para el color del pincel
-    public static int tam; // Variable para el tamaño del pincel
+    private String mCurrentPhotoPath; // Variable para guardar la ruta de la foto realizada
+    private SharedPreferences preferences; // Objeto de la clase de Preferencias
+    private int c; // Variable para el color del pincel
+    private int tam; // Variable para el tamaño del pincel
+        // Variables staticas y finales
+    public static final int ACTION_TAKE_PHOTO_B = 1;
+    public static final String PNG_FILE_SUFFIX = ".png";
 
-    private String mCurrentPhotoPath;
-    private static final int ACTION_TAKE_PHOTO_B = 1;
-    private static final String PNG_FILE_SUFFIX = ".png";
-    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        lienzoDibujo = new LienzoDibujo(this); // Declaracion del objeto de lienzoDibujo
+        canvas = new CanvasSufaceView(this); // Declaracion del objeto de canvas
         myDB = new DataBaseHelper(this); // Declaraicon del objeto de base de datos
 
         // Recuperamos preferencias
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this); // Definimos el objeto de las preferencias
 
 
         // Deficiones de los botones de colores (y goma) y activamos acciones
-        bt_green = findViewById(R.id.bt_color1); // Definicion
-        bt_green.setOnClickListener(this); // Accion
+        bt_verde = findViewById(R.id.bt_color1); // Definicion
+        bt_verde.setOnClickListener(this); // Accion
         bt_ama = findViewById(R.id.bt_color2); // Definicion
         bt_ama.setOnClickListener(this); // Accion
         bt_rojo = findViewById(R.id.bt_color3); // Definicion
@@ -115,14 +115,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View view) { // Guardamos el bitmap en la base de datos
                 // Generamos nombre
-                Date today = Calendar.getInstance().getTime();
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");
-                String folderName = "IMG_"+formatter.format(today)+".png";
+                String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                String folderName = "IMG_" + timeStamp+PNG_FILE_SUFFIX;
 
-                lienzoDibujo.saveBitmap(folderName); // Llamamos al metodo de guardar
+                canvas.saveBitmap(folderName); // Llamamos al metodo de guardar
 
                 // Añadimos a la base de datos
-                boolean  isInserted = myDB.insertData(folderName,lienzoDibujo.outPath+"/"+folderName);
+                boolean  isInserted = myDB.insertData(folderName, canvas.outPath+"/"+folderName);
                 if (isInserted == true)
                     Toast.makeText(MainActivity.this, "Data Inserted", Toast.LENGTH_LONG).show();
                 else
@@ -192,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 
-            storageDir =  new File (lienzoDibujo.outPath + "/paint"
+            storageDir =  new File (canvas.outPath + "/paint"
             );
 
             if (storageDir != null) {

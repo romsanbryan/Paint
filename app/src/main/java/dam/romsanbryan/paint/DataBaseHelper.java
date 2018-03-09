@@ -11,19 +11,18 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Contiene los metodos necesarios para crear, annadir y borrar datos
  *
  * @author romsanbryan
- * @version 1.0.0  2018-02-01
  * @see SQLiteOpenHelper
+ * @version 1.0.0  2018-03-08
  */
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     // Variables
-    public static final String DATABASE_NAME = "Student.db"; // DataBase Name
-    public static final String TABLE_NAME = "student_table"; // Table Name
+    public static final String DATABASE_NAME = "Paint.db"; // DataBase Name
+    public static final String TABLE_NAME = "recents"; // Table Name
     public static final String COL_1 = "ID"; // Colum 1
     public static final String COL_2 = "Name"; // Colum 2
-    public static final String COL_3= "Subname"; // Colum 3
-    public static final String COL_4= "Marks"; // Colum 4
+    public static final String COL_3= "URL"; // Colum 3
 
     /**
      * Constructor utilizado por la clase SQLiteOpenHelper para crear la base de datos
@@ -42,15 +41,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE "+TABLE_NAME+" ("+COL_1+" INTEGER PRIMARY KEY AUTOINCREMENT,"
-                +COL_2+" TEXT,"+COL_3+" TEXT,"+COL_4+" INTEGER)");
+                +COL_2+" TEXT,"+COL_3+" TEXT)");
     }
 
     /**
      * Si la base de datos ya existe la borra y crea una nueva
      *
      * @param db Base de datos
-     * @param i
-     * @param i1
+     * @param i Version Anterior
+     * @param i1 Version nueva
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
@@ -62,19 +61,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      * Insertar datos en la tabla mediante un contenedor de valores (ContentView)
      *
      * @param name Nombre del archivo
-     * @param subname Ruta del archivo
+     * @param paht Ruta del archivo
      * @return True si los datos se introduciron correctamente
      */
-    public boolean insertData(String name, String subname){
+    public boolean insertData(String name, String paht){
         SQLiteDatabase db = this.getWritableDatabase(); // Activamos que podemos escribir en la base de datos
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, name);
-        contentValues.put(COL_3, subname);
+        contentValues.put(COL_3, paht);
         long result = db.insert(TABLE_NAME, null, contentValues);
-        if (result==-1)
-            return false;
-        else
-            return true;
+        return result != -1;
     }
 
     /**
@@ -84,19 +80,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      */
     public Cursor getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM "+TABLE_NAME, null);
-        return res;
+        return db.rawQuery("SELECT * FROM "+TABLE_NAME, null);
     }
 
-    /**
-     * Borra un registro de la tabla en la base de datos segun el id
-     *
-     * @param id ID para borrar
-     * @return -1 si hay algun error con el delete
-     */
-    public Integer deleteData(String id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, COL_1+" = ?", new String[] { id });
-    }
 }
-

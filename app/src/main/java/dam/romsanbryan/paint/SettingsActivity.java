@@ -6,7 +6,9 @@ import android.preference.PreferenceActivity;
 /**
  * Clase que carga las preferencias
  *
- * Created by romsanbryan on 8/03/18.
+ * @author romsanbryan
+ * @see PreferenceActivity
+ * @since 1.02 on 2018-03-08
  */
 
 public class SettingsActivity extends PreferenceActivity {
@@ -15,7 +17,6 @@ public class SettingsActivity extends PreferenceActivity {
      * Creamos la vista y la configuramos
      *
      * @param savedInstanceState
-     * @return Devolvemos la vista
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
