@@ -6,9 +6,9 @@
         <item>Rojo</item>
         <item>Azul</item>
         <item>Magenta</item>
-
         <item>Negro</item>
     </string-array>
+
     <string-array name="codigoColor">
         <item>-16711936</item>
         <item>-256</item>

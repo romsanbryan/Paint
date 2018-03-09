@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Paint</string>
+
+    <string name="recientes">Recents</string>
+    <string name="abrir">Open</string>
+    <string name="nuevo">New</string>
+
 </resources>

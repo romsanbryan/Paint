@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="dam.romsanbryan.paint.EditorActivity">
+    tools:context="dam.romsanbryan.paint.MainActivity">
 
 
     <include layout="@layout/content_settings"  />
 
     <LinearLayout
-        android:layout_width="100dp"
+        android:layout_width="105dp"
         android:layout_height="match_parent"
-        android:background="#D8D8D8"
+        android:background="@color/ajustes"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/pref"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@mipmap/setting" />
+            android:background="@mipmap/setting"
+            />
 
         <Button
             android:id="@+id/bt_reciente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recientes" />
+            android:text="@string/recientes" />
 
         <Button
             android:id="@+id/bt_open"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Open" />
+            android:text="@string/abrir" />
 
         <Button
             android:id="@+id/bt_new"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New" />
+            android:text="@string/nuevo" />
 
         <Button
             android:id="@+id/goma"
-            android:layout_width="37dp"
-            android:layout_height="38dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@mipmap/goma" />
 
         <LinearLayout
@@ -71,8 +71,8 @@
 
         <Button
             android:id="@+id/bt_save"
-            android:layout_width="37dp"
-            android:layout_height="38dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@mipmap/save" />
 
         <LinearLayout
@@ -82,25 +82,25 @@
 
             <Button
                 android:id="@+id/bt_color1"
-                android:layout_width="23dp"
-                android:layout_height="28dp"
+                android:layout_width="26dp"
+                android:layout_height="38dp"
                 android:layout_margin="3dp"
                 android:layout_weight="0"
-                android:background="#00FF00" />
+                android:background="@color/verde" />
 
             <Button
                 android:id="@+id/bt_color2"
-                android:layout_width="23dp"
-                android:layout_height="28dp"
+                android:layout_width="26dp"
+                android:layout_height="38dp"
                 android:layout_margin="3dp"
-                android:background="#ffffff00" />
+                android:background="@color/amarillo" />
 
             <Button
                 android:id="@+id/bt_color3"
-                android:layout_width="23dp"
-                android:layout_height="28dp"
+                android:layout_width="26dp"
+                android:layout_height="38dp"
                 android:layout_margin="3dp"
-                android:background="#DF0101" />
+                android:background="@color/rojo" />
         </LinearLayout>
 
         <LinearLayout
@@ -110,24 +110,24 @@
 
             <Button
                 android:id="@+id/bt_color4"
-                android:layout_width="23dp"
-                android:layout_height="28dp"
+                android:layout_width="26dp"
+                android:layout_height="38dp"
                 android:layout_margin="3dp"
-                android:background="#0000FF" />
+                android:background="@color/azul" />
 
             <Button
                 android:id="@+id/bt_color5"
-                android:layout_width="23dp"
-                android:layout_height="28dp"
+                android:layout_width="26dp"
+                android:layout_height="38dp"
                 android:layout_margin="3dp"
-                android:background="#ffff00ff" />
+                android:background="@color/magenta" />
 
             <Button
                 android:id="@+id/bt_color6"
-                android:layout_width="23dp"
-                android:layout_height="28dp"
+                android:layout_width="26dp"
+                android:layout_height="38dp"
                 android:layout_margin="3dp"
-                android:background="#000" />
+                android:background="@color/negro" />
         </LinearLayout>
 
         <Button
@@ -141,7 +141,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="100dp" >
+        android:paddingLeft="105dp" >
         <dam.romsanbryan.paint.LienzoDibujo
             android:id="@+id/lienzoDibujo"
             android:layout_width="match_parent"

@@ -1,24 +1,26 @@
 package dam.romsanbryan.paint;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.preference.PreferenceActivity;
 
 /**
+ * Clase que carga las preferencias
+ *
  * Created by romsanbryan on 8/03/18.
  */
 
-public class SettingsActivity extends PreferenceFragment {
+public class SettingsActivity extends PreferenceActivity {
 
+    /**
+     * Creamos la vista y la configuramos
+     *
+     * @param savedInstanceState
+     * @return Devolvemos la vista
+     */
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        view.setBackgroundColor(Color.WHITE);
-        addPreferencesFromResource(R.xml.preferencias);
-        return view;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferencias); // Cargamos las preferencias a la vista
+
     }
 }
