@@ -17,6 +17,7 @@ import android.view.SurfaceView;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 
 
 /**
@@ -35,6 +36,8 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
     private Path drawPath; // Ruta dibujada con el dedo
     private Bitmap bitMap; // Mapa de bits
     private SharedPreferences preferences; // Objeto de preferencias
+    private File ruta;
+    private String sourceFileName;
         // Variables staticas y final
     public static final File outPath = new File("/sdcard/DCIM/"); // Ruta donde guardaremos las imagenes;
 
@@ -164,6 +167,29 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
         }
     }
 
+    public  void setBitmap(InputStream file, String fileName, File path){
+        try {
+            this.ruta = path;
+
+            this.sourceFileName = fileName;
+
+            this.bitMap = BitmapFactory.decodeStream(file);
+
+            if(this.bitMap!=null) {
+                if (Build.VERSION.SDK_INT>=19) {
+
+                    this.bitMap.setWidth(getWidth());
+                    this.bitMap.setHeight(getHeight());
+                }
+                hiloDibujo.start();
+            }
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * Guardamos imagen del bitMap
      */
@@ -208,7 +234,6 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
          */
         @Override
         public void run() {
-            boolean retry=true; // Variable para las repeticiones
 
             if (holder.getSurface().isValid()) { // Si el lienzo padre es valido
                 try {
@@ -229,22 +254,13 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
 
                 } catch(Exception e) { // Recogemos todas las excepciones
                     e.printStackTrace();
-                }finally { // Finalmente desbloqueamos el canvas
+                }finally { // Finalmente...
                     if (canvas != null) {
                         holder.unlockCanvasAndPost(canvas);
                         bitMap = getDrawingCache(); // Guardamos el cache en el bitmap
-
                     }
                 }
             }
-/*            while (retry) { // Repetimos para finalizar hilo si retry = true
-                try {
-                    this.join(); // Finalizamos hilo
-                    retry = false; // Variable para salir del bucle
-               } catch (InterruptedException e) { // Recogemos error de hilo interrumpido
-                    e.printStackTrace();
-                }
-            }*/
         }
     }
 }
