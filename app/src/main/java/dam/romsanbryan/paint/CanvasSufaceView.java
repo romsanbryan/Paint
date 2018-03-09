@@ -21,7 +21,12 @@ import java.io.InputStream;
 
 
 /**
- * Created by romsanbryan on 5/3/18.
+ * Clase que permite ajustar el lienzo y poder pintar sobre el
+ *
+ * @author romsanbryan
+ * @see SurfaceView
+ * @see SurfaceHolder.Callback
+ * @since 1.0.5  2018-03-09
  */
 @SuppressLint("AppCompatCustomView")
 public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callback {
@@ -147,7 +152,7 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
 
 
     /**
-     * Guardamos el bitMap
+     * Implementamos el bitMap de la foto
      *
      * @param bitMap
      */
@@ -167,6 +172,12 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
         }
     }
 
+    /**
+     * Implementamos el bitmap de la carga
+     * @param file Archivo destino
+     * @param fileName Nombr del archivo
+     * @param path Ruta
+     */
     public  void setBitmap(InputStream file, String fileName, File path){
         try {
             this.ruta = path;

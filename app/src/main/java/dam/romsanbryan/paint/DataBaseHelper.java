@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  *
  * @author romsanbryan
  * @see SQLiteOpenHelper
- * @version 1.0.0  2018-03-08
+ * @since 1.0.0  2018-03-08
  */
 
 public class DataBaseHelper extends SQLiteOpenHelper {

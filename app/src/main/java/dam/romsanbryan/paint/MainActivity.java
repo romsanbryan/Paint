@@ -26,13 +26,20 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
+/**
+ * Aplicación de un Paint simple para dispositivos Android
+ *
+ * @author romsanbryan
+ * @see AppCompatActivity
+ * @see View.OnClickListener
+ * @since 1.0.5  2018-03-09
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Metodos
         // Privados
     private CanvasSufaceView canvas; // Objeto de la clase LienzoDibujo
-    private DataBaseHelper myDB;
+    private DataBaseHelper myDB; // Objeto de la base de datos
     private Button bt_verde, bt_rojo, bt_ama, bt_azul, bt_mor, bt_ne, bt_bor; // Botones de colores
     private Button bt_mas, bt_menos; // Botones de tamaño del pincel
     private Button  bt_new, bt_pref, bt_reciente, bt_save, bt_foto, bt_open; // Otros botones
@@ -40,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SharedPreferences preferences; // Objeto de la clase de Preferencias
     private int c; // Variable para el color del pincel
     private int tam; // Variable para el tamaño del pincel
-    private Uri uri = null;
+    private Uri uri = null; // Rutas URI
 
     // Variables staticas y finales
     public static final int ACTION_TAKE_PHOTO_B = 1;
@@ -55,9 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         canvas = new CanvasSufaceView(this); // Declaracion del objeto de canvas
         myDB = new DataBaseHelper(this); // Declaraicon del objeto de base de datos
-
-        // Recuperamos preferencias
-        preferences = PreferenceManager.getDefaultSharedPreferences(this); // Definimos el objeto de las preferencias
+        preferences = PreferenceManager.getDefaultSharedPreferences(this); // Declaramos el objeto de las preferencias
 
 
         // Deficiones de los botones de colores (y goma) y activamos acciones
@@ -73,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_mor.setOnClickListener(this); // Accion
         bt_ne = findViewById(R.id.bt_color6); // Definicion
         bt_ne.setOnClickListener(this); // Accion
+
+
+
         bt_bor = findViewById(R.id.goma); // Definicion
         bt_bor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 takePhoto();
             }
         });
+
         bt_open = findViewById(R.id.bt_open);
         bt_open.setOnClickListener(new View.OnClickListener() {
             @Override
