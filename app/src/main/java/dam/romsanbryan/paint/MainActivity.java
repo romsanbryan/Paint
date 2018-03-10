@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 canvas.saveBitmap(folderName); // Llamamos al metodo de guardar
 
                 // Añadimos a la base de datos
-                boolean  isInserted = myDB.insertData(folderName, canvas.outPath+"/"+folderName);
+                boolean  isInserted = myDB.insertData(folderName, canvas.SAVE_PATH +"/"+folderName);
                 if (isInserted == true)
                     Toast.makeText(MainActivity.this, "Data Inserted", Toast.LENGTH_LONG).show();
                 else
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private File getImageDir() {
         File storageDir = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            storageDir =  new File (canvas.outPath + "/paint");
+            storageDir =  new File (canvas.SAVE_PATH + "/paint");
             if (storageDir != null) {
                 if (! storageDir.mkdirs()) {
                     if (! storageDir.exists()){

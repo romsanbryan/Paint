@@ -41,10 +41,10 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
     private Path drawPath; // Ruta dibujada con el dedo
     private Bitmap bitMap; // Mapa de bits
     private SharedPreferences preferences; // Objeto de preferencias
-    private File ruta;
-    private String sourceFileName;
-        // Variables staticas y final
-    public static final File outPath = new File("/sdcard/DCIM/"); // Ruta donde guardaremos las imagenes;
+    private File savePhoto;
+    private String fileName;
+        // Constantes
+    public static final File SAVE_PATH = new File("/sdcard/DCIM/"); // Ruta donde guardaremos las imagenes
 
     // Constructores
 
@@ -68,7 +68,6 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
 
         if (!bitMapFile.isEmpty()) { // Comprueba que el fichero de bitmap NO esta vacio
             bitMap = BitmapFactory.decodeFile(bitMapFile); // Decodifica el fichero en el bitmap
-
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext()); // Asignamos el objeto de preferencias
 
@@ -180,9 +179,9 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
      */
     public  void setBitmap(InputStream file, String fileName, File path){
         try {
-            this.ruta = path;
+            this.savePhoto = path;
 
-            this.sourceFileName = fileName;
+            this.fileName = fileName;
 
             this.bitMap = BitmapFactory.decodeStream(file);
 
@@ -206,7 +205,7 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
      */
     public void saveBitmap(String nombre){
         try {
-            FileOutputStream outFile = new FileOutputStream(new File(outPath,nombre));
+            FileOutputStream outFile = new FileOutputStream(new File(SAVE_PATH,nombre));
 
             bitMap.compress(Bitmap.CompressFormat.PNG,100, outFile);
 
