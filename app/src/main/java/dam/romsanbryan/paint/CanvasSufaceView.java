@@ -30,7 +30,7 @@ import java.io.InputStream;
  */
 @SuppressLint("AppCompatCustomView")
 public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callback {
-//
+
     // Variables
         // Privadas
     private DataBaseHelper myDB; // Objeto de la clase de base de datos
