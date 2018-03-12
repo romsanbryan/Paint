@@ -111,7 +111,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_new.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Limpiamos Canvas
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         });
 

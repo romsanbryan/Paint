@@ -1,11 +1,14 @@
 package dam.romsanbryan.paint;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Build;
@@ -16,8 +19,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 
 /**
@@ -39,11 +47,15 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
     private float touched_x; // Eje x de contacto
     private float touched_y; // Eje y de contacto
     private Path drawPath; // Ruta dibujada con el dedo
+    private Paint drawPaint; // Ruta pintada
     private Bitmap bitMap; // Mapa de bits
     private SharedPreferences preferences; // Objeto de preferencias
     private File savePhoto;
     private String fileName;
-        // Constantes
+    private File outPath;
+    private String sourceFileName;
+
+    // Constantes
     public static final File SAVE_PATH = new File("/sdcard/DCIM/"); // Ruta donde guardaremos las imagenes
 
     // Constructores
@@ -70,7 +82,7 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
             bitMap = BitmapFactory.decodeFile(bitMapFile); // Decodifica el fichero en el bitmap
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext()); // Asignamos el objeto de preferencias
-
+        drawPaint = new Paint(); // Pintada
         getHolder().addCallback(this); //suscribir la instancia de la clase al callback del holder
         drawPath = new Path(); // Trazos del para dibujar
         hiloDibujo = new HiloDibujo(getHolder()); // Hilo de dibujo
@@ -97,7 +109,11 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int width, int height) {
         // Crea un bitmap con las dimensiones del view
-        bitMap = Bitmap.createBitmap (width, height, Bitmap.Config.ARGB_8888);
+//        bitMap = Bitmap.createBitmap (width, height, Bitmap.Config.ARGB_8888);
+        if (bitMap == null) {
+            bitMap = Bitmap.createBitmap(CanvasSufaceView.this.getWidth(),
+                    CanvasSufaceView.this.getHeight(), Bitmap.Config.ARGB_4444);
+        }
     }
 
     /**
@@ -108,14 +124,6 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         boolean retry = true;
-        while (retry) {
-            try {
-                hiloDibujo.join();
-                retry = false;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /**
@@ -142,6 +150,10 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                break;
+            case MotionEvent.ACTION_UP:
+                drawPath.reset();
+                drawPaint.reset();
                 break;
             default:
                 return false;
@@ -172,33 +184,93 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
     }
 
     /**
-     * Implementamos el bitmap de la carga
+     * Modificamos al bitmap
+     *
      * @param file Archivo destino
      * @param fileName Nombr del archivo
      * @param path Ruta
+     *
      */
-    public  void setBitmap(InputStream file, String fileName, File path){
+    public void setBitmap(InputStream file, String fileName, File path) {
         try {
-            this.savePhoto = path;
+            outPath = path;
 
-            this.fileName = fileName;
+            sourceFileName = fileName;
+            bitMap = BitmapFactory.decodeStream(file);
+            file.close();
+            bitMap.copy(bitMap.getConfig(),true);
 
-            this.bitMap = BitmapFactory.decodeStream(file);
+            if (bitMap != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    bitMap.setWidth(CanvasSufaceView.this.getWidth());
 
-            if(this.bitMap!=null) {
-                if (Build.VERSION.SDK_INT>=19) {
-
-                    this.bitMap.setWidth(getWidth());
-                    this.bitMap.setHeight(getHeight());
                 }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    bitMap.setHeight(CanvasSufaceView.this.getHeight());
+                    hiloDibujo.join();
+
+                }
+
                 hiloDibujo.start();
             }
-            file.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public Bitmap devulveBitmap() {
+        return bitMap;
+    }
+
+    public static Bitmap convertToMutable(Bitmap imgIn, String FileName) {
+        try {
+            //this is the file going to use temporally to save the bytes.
+            // This file will not be a image, it will store the raw image data.
+            File file = new File(FileName + File.separator + "temp.tmp");
+
+            //Open an RandomAccessFile
+            //Make sure you have added uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+            //into AndroidManifest.xml file
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+
+            // get the width and height of the source bitmap.
+            int width = imgIn.getWidth();
+            int height = imgIn.getHeight();
+            Bitmap.Config type = imgIn.getConfig();
+
+            //Copy the byte to the file
+            //Assume source bitmap loaded using options.inPreferredConfig = Config.ARGB_8888;
+            FileChannel channel = randomAccessFile.getChannel();
+            MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_WRITE, 0, imgIn.getRowBytes() * height);
+            imgIn.copyPixelsToBuffer(map);
+            //recycle the source bitmap, this will be no longer used.
+            imgIn.recycle();
+            System.gc();// try to force the bytes from the imgIn to be released
+
+            //Create a new bitmap to load the bitmap again. Probably the memory will be available.
+            imgIn = Bitmap.createBitmap(width, height, type);
+            map.position(0);
+            //load it back from temporary
+            imgIn.copyPixelsFromBuffer(map);
+            //close the temporary file and channel , then delete that also
+            channel.close();
+            randomAccessFile.close();
+
+            // delete the temp file
+            file.delete();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return imgIn;
+    }
+
+    public void cl(){
+
+    }
 
     /**
      * Guardamos imagen del bitMap
@@ -245,32 +317,34 @@ public class CanvasSufaceView extends SurfaceView implements SurfaceHolder.Callb
         @Override
         public void run() {
 
-            if (holder.getSurface().isValid()) { // Si el lienzo padre es valido
+            boolean retry = true;
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (holder.getSurface().isValid()) {
+
+
                 try {
-                    canvas = holder.lockCanvas(null); // Bloqueamos canvas
-
-                    canvas.drawBitmap(Bitmap.createBitmap (CanvasSufaceView.this.getWidth()
-                            , CanvasSufaceView.this.getHeight(), Bitmap.Config.ARGB_8888), 0,0,null); // Cargamos nuestro bitmap
-                    // Propiedades del pincel
+                    canvas = holder.lockCanvas(null);
+                    canvas.drawBitmap(bitMap, 0, 0, null);
                     drawPaint.setColor(Integer.parseInt(preferences.getString("color", "-16777216"))); // Color
-                    drawPaint.setAntiAlias(true); // Configura Flags
+                    drawPaint.setAntiAlias(true);
                     drawPaint.setStrokeWidth(Integer.parseInt(preferences.getString("tamaño", "20"))); // Tamaño
-                    drawPaint.setStyle(Paint.Style.STROKE); // Estilo
-                    drawPaint.setStrokeJoin(Paint.Join.ROUND); // Punta
-                    drawPaint.setStrokeCap(Paint.Cap.ROUND); // Punta del acabado
+                    drawPaint.setStyle(Paint.Style.STROKE);
+                    drawPaint.setStrokeJoin(Paint.Join.ROUND);
+                    drawPaint.setStrokeCap(Paint.Cap.ROUND);
+                    canvas.drawPath(drawPath, drawPaint);
 
-                    canvas.drawPath(drawPath, drawPaint); // Dibujamos en canvas
 
 
-                } catch(Exception e) { // Recogemos todas las excepciones
-                    e.printStackTrace();
-                }finally { // Finalmente...
-                    if (canvas != null) {
+                } finally {
+                    if (canvas != null)
                         holder.unlockCanvasAndPost(canvas);
-                        bitMap = getDrawingCache(); // Guardamos el cache en el bitmap
-                    }
                 }
             }
+
         }
     }
 }
